@@ -2,13 +2,12 @@
     <qresource prefix="/images">
         <file alias="video">images/u=1759292780,2681863280&amp;fm=21&amp;gp=0.png</file>
         <file>images/add163.png</file>
-        <file>images/pause2.png</file>
-        <file>images/pause.png</file>
         <file alias="play">images/play86.png</file>
         <file>images/play-b128.png</file>
         <file>images/play-lb18.png</file>
         <file alias="sunshine">images/sunshine1.png</file>
-        <file alias="stop">images/pause39 (1).png</file>
         <file alias="openframe">images/copy27.png</file>
+        <file alias="stop">images/pause39 (1).png</file>
+        <file alias="search">images/magnifying_glass.png</file>
     </qresource>
 </RCC>

@@ -11,6 +11,8 @@
 #include "ui_mainwindow.h"
 #include <cv.h>
 #include <highgui.h>
+#include <QtMultimedia/QMediaPlayer>
+#include <QVideoWidget>
 #include "vwidget.h"
 
 namespace Ui {
@@ -27,7 +29,12 @@ public:
 
     VWidget *widget;
 
+    char *imagePath;
+    bool imageOpen;
+    IplImage *img;
+
     void open_video(const char *path);
+    void open_image(const char *path);
 
 private slots:
     void on_actionOpenFile_triggered();
@@ -47,6 +54,8 @@ private slots:
     void on_horizontalSlider_actionTriggered(int action);
 
     void on_horizontalSlider_valueChanged(int value);
+
+    void on_actionSearch_triggered();
 
 private:
     Ui::MainWindow *ui;

@@ -24,7 +24,15 @@ LIBS += -LE:\opencv\opencv\build\x64\vc12\lib \
     -lopencv_calib3d2410
 }
 
-QT       += core gui
+LIBS += -LE:\QTproject\HelloWorld\lib \
+	-lEV2641CDVSLib
+
+LIBS += -LE:\QTproject\HelloWorld\dll \
+	-lEV2641CDVSLib
+	-llibfftw3f-3
+
+QT       += core gui \
+	    multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

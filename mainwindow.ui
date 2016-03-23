@@ -77,6 +77,7 @@
    <addaction name="actionOpenFrame"/>
    <addaction name="separator"/>
    <addaction name="actionPlay_Stop"/>
+   <addaction name="actionSearch"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenFile">
@@ -134,6 +135,18 @@
    </property>
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/images/search</normaloff>:/images/search</iconset>
+   </property>
+   <property name="text">
+    <string>Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Search</string>
    </property>
   </action>
  </widget>

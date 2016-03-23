@@ -1,3 +1,6 @@
+#ifndef EXAMPLE_HPP
+#define EXAMPLE_HPP
+
 #include <stdio.h>
 #include <string>
 #include "EV2641CDVSLib.h"
@@ -231,13 +234,13 @@ int  VideoToImage(char* videoName, char* outDir, char* imgExt, int maxFrameCount
 			cout << "frame = " << frameNum << ", image = " << n << endl;
 			strcpy_s(file, "");
 			sprintf_s(file, "%s%d%s%d%s", outDir, n, "-", frameNum, imgExt);//这里的设置适合形如 123.jpg 124.jpg的图片序列
-			cvSaveImage(file, tempFrame, NULL);//保存图像到指定文件
-			EV2641Buffer tmp;
-			char sframe[10];
-			sprintf_s(sframe, "%d", frameNum);
-			EV2641_GetFeatureByPath(file, &tmp, 13);
-			EV2641_AddToIndex(hIndex, &tmp, sframe);
-			EV2641_FreeBuffer(&tmp);
+            cvSaveImage(file, tempFrame, NULL);//保存图像到指定文件
+            EV2641Buffer tmp;
+            char sframe[10];
+            sprintf_s(sframe, "%d", frameNum);
+            EV2641_GetFeatureByPath(file, &tmp, 13);
+            EV2641_AddToIndex(hIndex, &tmp, sframe);
+            EV2641_FreeBuffer(&tmp);
 		}
 		if (frameNum > 2)
 		{
@@ -262,14 +265,14 @@ int  VideoToImage(char* videoName, char* outDir, char* imgExt, int maxFrameCount
 			cout << "frame = " << frameNum << ", image = " << n << endl;
 			strcpy_s(file, "");
 			sprintf_s(file, "%s%d%s%d%s", outDir, n, "-", frameNum, imgExt);//这里的设置适合形如 123.jpg 124.jpg的图片序列
-			cvSaveImage(file, tempFrame, NULL);//保存图像到指定文件
+            cvSaveImage(file, tempFrame, NULL);//保存图像到指定文件
 			cvCvtColor(tempFrame, previousFrame, CV_BGR2GRAY);//颜色空间转换函数，可以实现RGB颜色向HSV,HSI等颜色空间的转换，也可以转换为灰度图像
-			EV2641Buffer tmp;
-			char sframe[10];
-			sprintf_s(sframe, "%d", frameNum);
-			EV2641_GetFeatureByPath(file, &tmp, 13);
-			EV2641_AddToIndex(hIndex, &tmp, sframe);
-			EV2641_FreeBuffer(&tmp);
+            EV2641Buffer tmp;
+            char sframe[10];
+            sprintf_s(sframe, "%d", frameNum);
+            EV2641_GetFeatureByPath(file, &tmp, 13);
+            EV2641_AddToIndex(hIndex, &tmp, sframe);
+            EV2641_FreeBuffer(&tmp);
 		}
 		//(currentFrame, currentFrame);
 		//cvErode(currentFrame, currentFrame);
@@ -479,7 +482,7 @@ int recursive_mkdir(char *dir)
 	return 0;
 }
 
-void Test()
+long Test(const char *videoPath, const char *imagePath)
 {
 	//视频转图片  
 	/*char videoName1[100];
@@ -599,19 +602,22 @@ void Test()
 	EV2641_InitCDVSSDK();
 	hIndex = EV2641_CreateIndex();
 
-    char* videoName1 = "C:\\cdvs\\cdvs\\cdvs\\altare.avi";                                              //
-	char* outDir1 = "C:\\cdvs\\cdvs\\cdvs\\pic\\";
+    int len = strlen(videoPath) + 10;
+    char *videoName1 = new char[len];
+    strcpy(videoName1, videoPath);
+//    char* videoName1 = "E:\\QTproject\\HelloWorld\\video\\altare.avi";                                              //
+    char* outDir1 = "E:\\QTproject\\HelloWorld\\pic\\";
 	int images = VideoToImage(videoName1, outDir1, ".jpg", 1000);                                          //
 	cout << "total " << images << " frames have been extracted from video." << endl;
 
-
+    return 0;
 
 	EV2641Buffer pCDVS1;
 	/*cout << "Please input the picture name you want to query(suffix with .jpg):";
 	char picName1[100];
 	cin >> picName1;
 	EV2641_GetFeatureByPath(picName1, &pCDVS1, 10);*/
-	EV2641_GetFeatureByPath("0.jpg", &pCDVS1, 13);                                                          //
+    EV2641_GetFeatureByPath(imagePath, &pCDVS1, 13);                                                          //
 	/*
 	EV2641Buffer pCDVS2;
 	EV2641_GetFeatureByPath("pic\\521.jpg", &pCDVS2, 10);
@@ -657,7 +663,7 @@ void Test()
 	//EV2641Buffer pCDVS3;
 	//EV2641_GetFeatureByPath("1.jpg", &pCDVS3, 13);
 
-	EV2641_Retrieval(&pCDVS1, hIndex, res, &max_num, 0);
+    EV2641_Retrieval(&pCDVS1, hIndex, res, &max_num, 0);
 	printf("return num: %d\n", max_num);
 	string s;
 	for(int i = 0; i < max_num; i++)
@@ -676,7 +682,7 @@ void Test()
 	EV2641_UninitCDVSSDK();
 
 
-	system("pause");
+//	system("pause");
 
 	//打开视频文件：其实就是建立一个VideoCapture结构
 	VideoCapture capture1("altare.avi");                                                                      //
@@ -690,6 +696,9 @@ void Test()
 	//设置开始帧()
 	long frameToStart1 = atoi(s.c_str());
 	capture1.set(CV_CAP_PROP_POS_FRAMES, frameToStart1);
+
+    return frameToStart1;       // return value
+
 	cout << "从第" << frameToStart1 << "帧开始读" << endl;
 
 	//设置结束帧
@@ -770,3 +779,5 @@ void Test()
 //	system("pause");
 //	return 0;
 //}
+
+#endif

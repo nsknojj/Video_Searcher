@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "example.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -8,6 +9,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->horizontalLayout->addWidget(widget);
     this->setWindowIcon(QIcon(":/images/sunshine"));
+    imageOpen = 0;
+
+//    QMediaPlayer *player = new QMediaPlayer;
+
+//    QVideoWidget *videoWidget = new QVideoWidget;
+
+//    ui->horizontalLayout->addWidget(videoWidget);
+
+//    player->setMedia(QUrl::fromLocalFile("E:/a.mp4"));
+//    player->setVideoOutput(videoWidget);
+
+//    videoWidget->show();
+//    player->play();
 }
 
 MainWindow::~MainWindow()
@@ -28,6 +42,26 @@ void MainWindow::open_video(const char *path)
     widget->resize(widget->video->frame->width, widget->video->frame->height);
 }
 
+void MainWindow::open_image(const char *path)
+{
+    int len = strlen(path);
+    if (imageOpen) {
+        delete[] imagePath;
+        cvReleaseImage(&img);
+        cvDestroyAllWindows();
+        //
+    }
+    imageOpen = 1;
+    imagePath = new char[len + 10];
+    strcpy(imagePath, path);
+    img = cvLoadImage(imagePath);
+    cvNamedWindow("frame", CV_WINDOW_AUTOSIZE);
+    cvShowImage("frame", img);
+    cvWaitKey(0);
+    cvReleaseImage(&img);
+    cvDestroyAllWindows();
+}
+
 
 void MainWindow::on_actionOpenFile_triggered()
 {
@@ -45,7 +79,16 @@ void MainWindow::on_actionOpenFile_triggered()
 
 void MainWindow::on_actionOpenFrame_triggered()
 {
-
+    QString path = QFileDialog::getOpenFileName(this,
+                                                    tr("Open File"),
+                                                    ".",
+                                                    tr("Image(*.png *.gif *.jpg)"));
+    if(!path.isEmpty()) {
+        open_image(path.toStdString().c_str());
+    } else {
+//        QMessageBox::warning(this, tr("Path"),
+//                             tr("You did not select any file."));
+    }
 }
 
 void MainWindow::on_actionPlay_Stop_triggered()
@@ -95,4 +138,12 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
     widget->video->change_pos(value);
     widget->video_next_frame();
+}
+
+void MainWindow::on_actionSearch_triggered()
+{
+    int pos = (int)Test(widget->video->path, imagePath);
+    widget->video->change_pos(pos);
+    change_slide();
+
 }

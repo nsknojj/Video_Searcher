@@ -11,7 +11,7 @@ Video::Video(const char *filename)
     timer = new QTimer(this);
 //    std::cerr<<(int)round(1000.0/cvGetCaptureProperty(capture, CV_CAP_PROP_FPS));
     timer->setInterval((int)round(1000.0/cvGetCaptureProperty(capture, CV_CAP_PROP_FPS)));
-    timer->setInterval(60);
+//    timer->setInterval(20);
     timer->stop();
 
     qImg = new QImage(QSize(frame->width,frame->height), QImage::Format_RGB888);
