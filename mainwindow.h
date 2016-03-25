@@ -14,6 +14,7 @@
 #include <QtMultimedia/QMediaPlayer>
 #include <QVideoWidget>
 #include "vwidget.h"
+#include "myvideowidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,14 +28,18 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    VWidget *widget;
+    QVideoWidget *videoWidget;
+    QMediaPlayer *player;
 
     char *imagePath;
-    bool imageOpen;
+    char *videoPath;
+    bool imageOpen, playStatus;
     IplImage *img;
+    QTimer *timer;
 
     void open_video(const char *path);
     void open_image(const char *path);
+    void paintEvent(QPaintEvent*);
 
 private slots:
     void on_actionOpenFile_triggered();

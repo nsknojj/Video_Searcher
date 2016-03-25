@@ -43,13 +43,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     vwidget.cpp \
-    video.cpp
+    video.cpp \
+    myvideowidget.cpp
 
 HEADERS  += mainwindow.h \
     vwidget.h \
     video.h \
     EV2641CDVSLib.h \
-    example.hpp
+    example.hpp \
+    myvideowidget.h
 
 RESOURCES += \
     res.qrc

@@ -482,7 +482,7 @@ int recursive_mkdir(char *dir)
 	return 0;
 }
 
-long Test(const char *videoPath, const char *imagePath)
+double Test(const char *videoPath, const char *imagePath)
 {
 	//视频转图片  
 	/*char videoName1[100];
@@ -606,11 +606,15 @@ long Test(const char *videoPath, const char *imagePath)
     char *videoName1 = new char[len];
     strcpy(videoName1, videoPath);
 //    char* videoName1 = "E:\\QTproject\\HelloWorld\\video\\altare.avi";                                              //
-    char* outDir1 = "E:\\QTproject\\HelloWorld\\pic\\";
-	int images = VideoToImage(videoName1, outDir1, ".jpg", 1000);                                          //
-	cout << "total " << images << " frames have been extracted from video." << endl;
+    char* outDir1 = new char[100];
+    string tmpStr("E:\\QTproject\\HelloWorld\\pic\\");
+    strcpy(outDir1, tmpStr.c_str());
+    char* jpg = new char[10];
+    tmpStr = ".jpg";
+    strcpy(jpg, tmpStr.c_str());
+    int images = VideoToImage(videoName1, outDir1, jpg, 1000);       //
 
-    return 0;
+	cout << "total " << images << " frames have been extracted from video." << endl;
 
 	EV2641Buffer pCDVS1;
 	/*cout << "Please input the picture name you want to query(suffix with .jpg):";
@@ -685,92 +689,92 @@ long Test(const char *videoPath, const char *imagePath)
 //	system("pause");
 
 	//打开视频文件：其实就是建立一个VideoCapture结构
-	VideoCapture capture1("altare.avi");                                                                      //
+    CvCapture *capture1 = cvCreateFileCapture(videoName1);
 	//检测是否正常打开:成功打开时，isOpened返回ture
-	if (!capture1.isOpened())
-		cout << "fail to open!" << endl;
+//	if (!capture1.isOpened())
+//		cout << "fail to open!" << endl;
 	//获取整个帧数
-	long totalFrameNumber1 = (long)capture1.get(CV_CAP_PROP_FRAME_COUNT);
+    long totalFrameNumber1 = cvGetCaptureProperty(capture1, CV_CAP_PROP_FRAME_COUNT);
 	cout << "整个视频共" << totalFrameNumber1 << "帧" << endl;
 
 	//设置开始帧()
-	long frameToStart1 = atoi(s.c_str());
-	capture1.set(CV_CAP_PROP_POS_FRAMES, frameToStart1);
+    long frameToStart1 = atoi(s.c_str());
+//	capture1.set(CV_CAP_PROP_POS_FRAMES, frameToStart1);
 
-    return frameToStart1;       // return value
+    return 1.0 * frameToStart1 / totalFrameNumber1;       // return value
 
-	cout << "从第" << frameToStart1 << "帧开始读" << endl;
+//	cout << "从第" << frameToStart1 << "帧开始读" << endl;
 
-	//设置结束帧
-	int frameToStop1 = frameToStart1 + 100;
+//	//设置结束帧
+//	int frameToStop1 = frameToStart1 + 100;
 
-	if (frameToStop1 < frameToStart1)
-	{
-		cout << "结束帧小于开始帧，程序错误，即将退出！" << endl;
-		exit(0);
-	}
-	else
-	{
-		cout << "结束帧为：第" << frameToStop1 << "帧" << endl;
-	}
+//	if (frameToStop1 < frameToStart1)
+//	{
+//		cout << "结束帧小于开始帧，程序错误，即将退出！" << endl;
+//		exit(0);
+//	}
+//	else
+//	{
+//		cout << "结束帧为：第" << frameToStop1 << "帧" << endl;
+//	}
 
-	//获取帧率
-	double rate1 = capture1.get(CV_CAP_PROP_FPS);
-	cout << "帧率为:" << rate1 << endl;
+//	//获取帧率
+//	double rate1 = capture1.get(CV_CAP_PROP_FPS);
+//	cout << "帧率为:" << rate1 << endl;
 
-	//定义一个用来控制读取视频循环结束的变量
-	bool stop1 = false;
-	//承载每一帧的图像
-	Mat frame1;
-	//显示每一帧的窗口
-	namedWindow("Extracted frame1");
-	//两帧间的间隔时间:
-	int delay1 = (int)1000 / (int)rate1;
+//	//定义一个用来控制读取视频循环结束的变量
+//	bool stop1 = false;
+//	//承载每一帧的图像
+//	Mat frame1;
+//	//显示每一帧的窗口
+//	namedWindow("Extracted frame1");
+//	//两帧间的间隔时间:
+//	int delay1 = (int)1000 / (int)rate1;
 
-	//利用while循环读取帧
-	//currentFrame是在循环体中控制读取到指定的帧后循环结束的变量
-	long currentFrame1 = frameToStart1;
+//	//利用while循环读取帧
+//	//currentFrame是在循环体中控制读取到指定的帧后循环结束的变量
+//	long currentFrame1 = frameToStart1;
 
-	//滤波器的核
-	//int kernel_size = 3;
-	//Mat kernel = Mat::ones(kernel_size, kernel_size, CV_32F) / (float)(kernel_size*kernel_size);
+//	//滤波器的核
+//	//int kernel_size = 3;
+//	//Mat kernel = Mat::ones(kernel_size, kernel_size, CV_32F) / (float)(kernel_size*kernel_size);
 
-	while (!stop1)
-	{
-		//读取下一帧
-		if (!capture1.read(frame1))
-		{
-			cout << "读取视频失败" << endl;
-			break;
-		}
+//	while (!stop1)
+//	{
+//		//读取下一帧
+//		if (!capture1.read(frame1))
+//		{
+//			cout << "读取视频失败" << endl;
+//			break;
+//		}
 
-		//这里加滤波程序
-		imshow("Extracted frame1", frame1);
-		//filter2D(frame, frame, -1, kernel);
+//		//这里加滤波程序
+//		imshow("Extracted frame1", frame1);
+//		//filter2D(frame, frame, -1, kernel);
 
-		//imshow("after filter", frame);
-		cout << "正在读取第" << currentFrame1 << "帧" << endl;
-		//waitKey(int delay=0)当delay ≤ 0时会永远等待；当delay>0时会等待delay毫秒
-		//当时间结束前没有按键按下时，返回值为-1；否则返回按键
+//		//imshow("after filter", frame);
+//		cout << "正在读取第" << currentFrame1 << "帧" << endl;
+//		//waitKey(int delay=0)当delay ≤ 0时会永远等待；当delay>0时会等待delay毫秒
+//		//当时间结束前没有按键按下时，返回值为-1；否则返回按键
 
-		int c = waitKey(delay1);
-		//按下ESC或者到达指定的结束帧后退出读取视频
-		if ((char)c == 27 || currentFrame1 > frameToStop1)
-		{
-			stop1 = true;
-		}
-		//按下按键后会停留在当前帧，等待下一次按键
-		if (c >= 0)
-		{
-			waitKey(0);
-		}
-		currentFrame1++;
+//		int c = waitKey(delay1);
+//		//按下ESC或者到达指定的结束帧后退出读取视频
+//		if ((char)c == 27 || currentFrame1 > frameToStop1)
+//		{
+//			stop1 = true;
+//		}
+//		//按下按键后会停留在当前帧，等待下一次按键
+//		if (c >= 0)
+//		{
+//			waitKey(0);
+//		}
+//		currentFrame1++;
 
-	}
-	//关闭视频文件
-	capture1.release();
-	destroyWindow("Extracted frame1");
-	//waitKey(0);
+//	}
+//	//关闭视频文件
+//	capture1.release();
+//	destroyWindow("Extracted frame1");
+//	//waitKey(0);
 }
 
 //int main()

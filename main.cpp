@@ -2,7 +2,6 @@
 #include <QApplication>
 #include <QLabel>
 #include <QPushButton>
-//#include "example.hpp"
 
 int main(int argc, char *argv[])
 {

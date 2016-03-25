@@ -5,23 +5,22 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    widget = new VWidget();
+//    widget = new VWidget();
     ui->setupUi(this);
-    ui->horizontalLayout->addWidget(widget);
     this->setWindowIcon(QIcon(":/images/sunshine"));
     imageOpen = 0;
 
-//    QMediaPlayer *player = new QMediaPlayer;
+    videoPath = new char[255];
+    player = NULL;
+    playStatus = 0;
+    timer = NULL;
+    videoWidget = new MyVideoWidget;
+    ui->horizontalLayout->addWidget(videoWidget);
+}
 
-//    QVideoWidget *videoWidget = new QVideoWidget;
-
-//    ui->horizontalLayout->addWidget(videoWidget);
-
-//    player->setMedia(QUrl::fromLocalFile("E:/a.mp4"));
-//    player->setVideoOutput(videoWidget);
-
-//    videoWidget->show();
-//    player->play();
+void MainWindow::paintEvent(QPaintEvent *e)
+{
+    videoWidget->show();
 }
 
 MainWindow::~MainWindow()
@@ -31,15 +30,38 @@ MainWindow::~MainWindow()
 
 void MainWindow::open_video(const char *path)
 {
-    if (widget->video) delete widget->video;
-    widget->video = new Video(path);
-    ui->horizontalSlider->setRange(0, cvGetCaptureProperty(widget->video->capture, CV_CAP_PROP_FRAME_COUNT));
-    connect(widget->video->timer, SIGNAL(timeout()), widget, SLOT(video_next_frame()));
-    connect(widget->video->timer, SIGNAL(timeout()), this, SLOT(change_slide()));
-    widget->video->change_pos(0);
-    widget->video_next_frame();
-    widget->video->change_pos(0);
-    widget->resize(widget->video->frame->width, widget->video->frame->height);
+    if (player != NULL) delete player;
+    strcpy(videoPath, path);
+    player = new QMediaPlayer;
+    player->setMedia(QUrl::fromLocalFile(QString(path)));//gdi
+    player->setVideoOutput(videoWidget);
+    ui->horizontalSlider->setRange(0, player->duration());
+    connect(player, &QMediaPlayer::positionChanged, [this](qint64 position){
+            if(player->duration() != ui->horizontalSlider->maximum())
+            {
+                ui->horizontalSlider->setMaximum(player->duration());
+            }
+            ui->horizontalSlider->setValue(player->position());
+    });
+//    player->play();
+    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(change_slide()));
+    videoWidget->show();
+
+    if (timer == NULL)
+        timer = new QTimer(this);
+    timer->setInterval(30);
+    timer->start();
+    connect(timer, SIGNAL(timeout()), videoWidget, SLOT(show()));
+
+//    if (widget->video) delete widget->video;
+//    widget->video = new Video(path);
+//    ui->horizontalSlider->setRange(0, cvGetCaptureProperty(widget->video->capture, CV_CAP_PROP_FRAME_COUNT));
+//    connect(widget->video->timer, SIGNAL(timeout()), widget, SLOT(video_next_frame()));
+//    connect(widget->video->timer, SIGNAL(timeout()), this, SLOT(change_slide()));
+//    widget->video->change_pos(0);
+//    widget->video_next_frame();
+//    widget->video->change_pos(0);
+//    widget->resize(widget->video->frame->width, widget->video->frame->height);
 }
 
 void MainWindow::open_image(const char *path)
@@ -93,22 +115,23 @@ void MainWindow::on_actionOpenFrame_triggered()
 
 void MainWindow::on_actionPlay_Stop_triggered()
 {
-    if (widget->video == NULL) return;
-    if (widget->video->playStatus == 0) {
+    if (player == NULL) return;
+    if (playStatus == 0) {
+            cerr<<player->duration();
         ui->actionPlay_Stop->setIcon(QIcon(":/images/stop"));
-        widget->video->playStatus = 1;
-        widget->video->timer->start();
+        playStatus = 1;
+        player->play();
     } else {
         ui->actionPlay_Stop->setIcon(QIcon(":/images/play"));
-        widget->video->playStatus = 0;
-        widget->video->timer->stop();
+        playStatus = 0;
+        player->pause();
     }
 }
 
 
 void MainWindow::change_slide()
 {
-    int p = cvGetCaptureProperty(widget->video->capture, CV_CAP_PROP_POS_FRAMES);
+    int p = (int)player->position();
     ui->horizontalSlider->setSliderPosition(p);
 }
 
@@ -119,13 +142,13 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_sliderPressed()
 {
-    widget->video->timer->stop();
+//    player->pause();
 }
 
 void MainWindow::on_horizontalSlider_sliderReleased()
 {
-    if (widget->video->playStatus == 1) {
-        widget->video->timer->start();
+    if (playStatus == 1) {
+        player->play();
     }
 }
 
@@ -136,14 +159,13 @@ void MainWindow::on_horizontalSlider_actionTriggered(int action)
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
-    widget->video->change_pos(value);
-    widget->video_next_frame();
+    player->setPosition(value);
+    videoWidget->show();
 }
 
 void MainWindow::on_actionSearch_triggered()
 {
-    int pos = (int)Test(widget->video->path, imagePath);
-    widget->video->change_pos(pos);
-    change_slide();
-
+    double pos = Test(videoPath, imagePath);
+    player->setPosition((qint64)(pos * player->duration()));
+    videoWidget->show();
 }
