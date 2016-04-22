@@ -249,15 +249,16 @@ int  VideoToImage(char* videoName, char* outDir, char* imgExt, int maxFrameCount
 			cvConvert(previousFrame, previousFrameMat);
 			cvAbsDiff(currentFrameMat, previousFrameMat, tempFrameMat);
 
-			for (int i = 0; i < tempFrame->height; i++)
-			{
-				for (int j = 0; j < tempFrame->width; j++)
-				{
-					count = cvGet2D(tempFrameMat, i, j);
-					sum = sum + count.val[0];
-				}
-			}
-		sum = sum / (tempFrame->height * tempFrame->width);
+            int div = 2;
+            for (int i = 0; i < tempFrame->height / div; i++)
+            {
+                for (int j = 0; j < tempFrame->width / div; j++)
+                {
+                    count = cvGet2D(tempFrameMat, i*2, j*2);
+                    sum = sum + count.val[0];
+                }
+            }
+        sum = sum / (tempFrame->height / div * tempFrame->width / div);
 		//cout << sum << endl;
 		if (sum > 30)
 		{
